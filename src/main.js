@@ -1,15 +1,31 @@
 
+window.addEventListener('load', initSelectxy);
 window.addEventListener('load', init);
 var root;
-var gcoll = 6, grow = 5;
+var gcoll = 6, grow = 5, ref_img_id='ref_img';
 var gwidth, gheight,
     swidth, sheight,
-    ref_img,
+    ref_img, bgImgArr,
     selected;
 var all_vars = [];
 function init(){
     root = document.getElementById("js_img_puzzle");
-    ref_img = document.getElementById("ref_img");
+    ref_img = document.getElementById(ref_img_id);
+    bgImgArr = document.querySelectorAll("img");
+    //console.log(bgImgArr);
+    for(var img_id =0;img_id < bgImgArr.length;img_id++){
+        //console.log(bgImgArr[img_id].src);
+        bgImgArr[img_id]
+            .addEventListener('click',selectImg);
+    }
+    var selectx = document.getElementById("selectx");
+    var selecty = document.getElementById("selecty");
+    if(selectx.value > 0){
+        gcoll = selectx.value;
+    }
+    if(selecty.value > 0){
+        grow = selecty.value;
+    }
     root.innerHTML = '';
     gwidth = ref_img.offsetWidth * 10;
     gheight = ref_img.offsetHeight * 10;
@@ -115,7 +131,7 @@ function randomCell(root){
             .style
             .backgroundPosition
         = temp;
-        console.log(index,temp,(all_vars.length-1), all_vars);
+        //console.log(index,temp,(all_vars.length-1), all_vars);
 	sortColor(
             all[all_vars[index]], 
             all[all_vars[(all_vars.length-1)]]
@@ -135,4 +151,35 @@ function checkWin(){
       }
     }
     return true;
+}
+
+function selectImg(e){
+    //console.log(e.target);
+    var dstyle = document.getElementById("dynamic_style");
+    dstyle.innerHTML = `
+    #js_img_puzzle div{
+      background-image: url(`+e.target.src+`);
+    }
+    `;
+    ref_img_id = e.target.id;
+    init();
+}
+
+function initSelectxy(){
+    var selectx = document.getElementById("selectx");
+    var selecty = document.getElementById("selecty");
+    var go = document.getElementById("go");
+    for(var x = 0;x < 15; x++){
+        var opt = document.createElement('option');
+        opt.innerHTML = x;
+        opt.value = x;
+        selectx.appendChild(opt);
+    }
+    for(var y = 0;y < 15; y++){
+        var opt = document.createElement('option');
+        opt.innerHTML = y;
+        opt.value = y;
+        selecty.appendChild(opt);
+    }
+    go.addEventListener('click', init);
 }
