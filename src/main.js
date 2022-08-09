@@ -37,10 +37,10 @@ function init(){
             all_vars.push(x+y*gcoll);
         }
     }
-    alert('ok '+ gwidth +" "+ gheight );
+    console.log('ok '+ gwidth +" "+ gheight );
     //sleep(1000);
     randomCell(root);
-    alert('done');
+    console.log('done');
 }
 function cellclick(e){
     var current = e.target.style.backgroundPosition;
@@ -56,88 +56,74 @@ function cellclick(e){
         selected.style.backgroundPosition = current;
         //e.target.style.border = '';
         selected.style.border = '';
-        //alert(selected.dataset.pos);
-        if(selected.dataset.pos == selected.style.backgroundPosition){
-        selected.style.border = 'solid 1px blue';
-        }
-        else{
-        selected.style.border = '';
-        }
-        if(e.target.dataset.pos == e.target.style.backgroundPosition){
-        e.target.style.border = 'solid 1px blue';
-        }
-        else{
-        e.target.style.border = '';
-        }
+        //console.log(selected.dataset.pos);
+	sortColor(selected, e.target);
         selected = '';
+    }
+    if(checkWin()){
+      alert("HURRAY!!!");
+      init();
     }
 }
 
+function sortColor(selected, target){
+    if(selected.dataset.pos == selected.style.backgroundPosition){
+    	selected.style.border = 'solid 1px white';
+    }
+    else{
+    	selected.style.border = '';
+    }
+    if(target.dataset.pos == target.style.backgroundPosition){
+    	target.style.border = 'solid 1px white';
+    }
+    else{
+     	target.style.border = '';
+    }
+}
 function randomCell(root){
     var all = root.children;
-    alert(all.length);
+    //console.log(all.length);
     //for(var i=1;i< all.length;i++){
     while(all_vars.length > 0){
         var index = Math.floor(
             Math.random() * (all_vars.length-1)
         );
-        //alert(all_vars.length-1);
-        alert(index+' '+(all_vars.length-1));
-        alert(all_vars[index]+' '+all_vars[all_vars.length-1]);
-        //if (i<all.length)
-        /*
-        while (
-            false
-            &&
-            index === (all.length-i)
-            ||
-
-            all_vars.indexOf(index) !== -1
-            //all[index].dataset.pos === all[all.length-i].style.backgroundPosition
-            
-        )  {
-
-            index = Math.floor(
-                Math.random() * (all.length-i)
-            );
-        }
-        */
-        //all_vars.sort();
-        //alert(i+' '+all_vars[index]+' '+(all.length-i));
-        //var tmp = all[index].dataset.pos;
-        //alert(tmp);
-        //var tmp2 = all[(all.length-i)].dataset.pos;
-        //alert(tmp2);
         var temp = 
-        all[all_vars[(all_vars.length-1)]]
+        all[all_vars[index]]
             .style
             .backgroundPosition
         ;
+
         all[all_vars[index]]
             .style
             .backgroundPosition
         = all[all_vars[(all_vars.length-1)]]
             .style
             .backgroundPosition
-            //..dataset.pos
         ;
-        //alert('ddd'+(all.length-i));
+
         all[all_vars[(all_vars.length-1)]]
             .style
             .backgroundPosition
         = temp;
-        /*
-            all[all_vars[index]]
-            .style
-            .backgroundPosition
-            //.dataset.pos
-        ;
-        */
-        //alert(i+index+' '+tmp+' '+(all.length-i));
-        //alert('iiiddd');
+        console.log(index,temp,(all_vars.length-1), all_vars);
+	sortColor(
+            all[all_vars[index]], 
+            all[all_vars[(all_vars.length-1)]]
+	);
         all_vars.splice(index,1);
-        //if(all_vars.indexOf(all.length-1)!==-1)
-        all_vars.splice(all_vars.indexOf(all_vars.length-1),1);
-        alert(JSON.stringify(all_vars));
+        all_vars.splice((all_vars.length-1),1);
+        //console.log(JSON.stringify(all_vars));
     }
+}
+
+function checkWin(){
+    var all = root.children;
+    for(var i=0;i < all.length;i++){
+      var selected = all[i];
+      if(selected.dataset.pos !== selected.style.backgroundPosition){
+	return false;
+      }
+    }
+    return true;
 }
