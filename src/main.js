@@ -36,7 +36,9 @@ function init(){
             //all_vars.push(cell.dataset.pos);
             all_vars.push(x+y*gcoll);
         }
+        
     }
+    root.style.maxWidth = (swidth*gcoll)+"px";
     console.log('ok '+ gwidth +" "+ gheight );
     //sleep(1000);
     randomCell(root);
