@@ -1,7 +1,7 @@
 
 window.addEventListener('load', init);
 var root;
-var gcoll = 4, grow = 4;
+var gcoll = 6, grow = 5;
 var gwidth, gheight,
     swidth, sheight,
     ref_img,
@@ -10,7 +10,7 @@ var all_vars = [];
 function init(){
     root = document.getElementById("js_img_puzzle");
     ref_img = document.getElementById("ref_img");
-    //root.innerHTML = 'LOADED';
+    root.innerHTML = '';
     gwidth = ref_img.offsetWidth * 10;
     gheight = ref_img.offsetHeight * 10;
     swidth = parseInt(gwidth / gcoll);
@@ -30,7 +30,7 @@ function init(){
             //cell.backgroundImage.width = gwidth;
             cell.style.backgroundSize = 
                 gwidth+"px "+gheight+"px";
-            cell.innerHTML = y+' '+x;
+            //cell.innerHTML = y+' '+x;
             cell.addEventListener('click', cellclick);
             root.appendChild(cell);
             //all_vars.push(cell.dataset.pos);
@@ -61,9 +61,16 @@ function cellclick(e){
         selected = '';
     }
     if(checkWin()){
-      alert("HURRAY!!!");
-      init();
+      function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+      }
+      sleep(100).then(() => {
+	//// code
+	alert("HURRAY!!!");
+	init();
+      });
     }
+
 }
 
 function sortColor(selected, target){
