@@ -1,15 +1,31 @@
 
+window.addEventListener('load', initSelectxy);
 window.addEventListener('load', init);
 var root;
-var gcoll = 6, grow = 5;
+var gcoll = 6, grow = 5, ref_img_id='ref_img';
 var gwidth, gheight,
     swidth, sheight,
-    ref_img,
+    ref_img, bgImgArr,
     selected;
 var all_vars = [];
 function init(){
     root = document.getElementById("js_img_puzzle");
-    ref_img = document.getElementById("ref_img");
+    ref_img = document.getElementById(ref_img_id);
+    bgImgArr = document.querySelectorAll("img");
+    //console.log(bgImgArr);
+    for(var img_id =0;img_id < bgImgArr.length;img_id++){
+        //console.log(bgImgArr[img_id].src);
+        bgImgArr[img_id]
+            .addEventListener('click',selectImg);
+    }
+    var selectx = document.getElementById("selectx");
+    var selecty = document.getElementById("selecty");
+    if(selectx.value > 0){
+        gcoll = selectx.value;
+    }
+    if(selecty.value > 0){
+        grow = selecty.value;
+    }
     root.innerHTML = '';
     gwidth = ref_img.offsetWidth * 10;
     gheight = ref_img.offsetHeight * 10;
@@ -44,6 +60,7 @@ function init(){
     randomCell(root);
     console.log('done');
 }
+
 function cellclick(e){
     var current = e.target.style.backgroundPosition;
     if(
@@ -52,6 +69,7 @@ function cellclick(e){
         !selected
     ){
         e.target.style.border = "solid 1px red";
+        e.target.style.filter = "invert()";
         selected = e.target;
     }else{
         e.target.style.backgroundPosition = selected.style.backgroundPosition;
@@ -59,7 +77,8 @@ function cellclick(e){
         //e.target.style.border = '';
         selected.style.border = '';
         //console.log(selected.dataset.pos);
-	sortColor(selected, e.target);
+    	sortColor(selected);
+    	sortColor(e.target);
         selected = '';
     }
     if(checkWin()){
@@ -69,26 +88,23 @@ function cellclick(e){
       sleep(100).then(() => {
 	//// code
 	alert("HURRAY!!!");
-	init();
+	//init();
       });
     }
 
 }
 
-function sortColor(selected, target){
-    if(selected.dataset.pos == selected.style.backgroundPosition){
-    	selected.style.border = 'solid 1px white';
-    }
-    else{
-    	selected.style.border = '';
-    }
+function sortColor(target){
     if(target.dataset.pos == target.style.backgroundPosition){
     	target.style.border = 'solid 1px white';
+        target.style.filter = "none";
     }
     else{
      	target.style.border = '';
+        target.style.filter = "";
     }
 }
+
 function randomCell(root){
     var all = root.children;
     //console.log(all.length);
@@ -115,11 +131,13 @@ function randomCell(root){
             .style
             .backgroundPosition
         = temp;
-        console.log(index,temp,(all_vars.length-1), all_vars);
-	sortColor(
-            all[all_vars[index]], 
-            all[all_vars[(all_vars.length-1)]]
-	);
+        //console.log(index,temp,(all_vars.length-1), all_vars);
+        sortColor(
+                all[all_vars[index]] 
+        );
+        sortColor(
+                all[all_vars[(all_vars.length-1)]]
+        );
         all_vars.splice(index,1);
         all_vars.splice((all_vars.length-1),1);
         //console.log(JSON.stringify(all_vars));
@@ -135,4 +153,35 @@ function checkWin(){
       }
     }
     return true;
+}
+
+function selectImg(e){
+    //console.log(e.target);
+    var dstyle = document.getElementById("dynamic_style");
+    dstyle.innerHTML = `
+    #js_img_puzzle div{
+      background-image: url(`+e.target.src+`);
+    }
+    `;
+    ref_img_id = e.target.id;
+    init();
+}
+
+function initSelectxy(){
+    var selectx = document.getElementById("selectx");
+    var selecty = document.getElementById("selecty");
+    var go = document.getElementById("go");
+    for(var x = 0;x < 15; x++){
+        var opt = document.createElement('option');
+        opt.innerHTML = x;
+        opt.value = x;
+        selectx.appendChild(opt);
+    }
+    for(var y = 0;y < 15; y++){
+        var opt = document.createElement('option');
+        opt.innerHTML = y;
+        opt.value = y;
+        selecty.appendChild(opt);
+    }
+    go.addEventListener('click', init);
 }
