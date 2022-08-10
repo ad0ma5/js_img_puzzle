@@ -60,6 +60,7 @@ function init(){
     randomCell(root);
     console.log('done');
 }
+
 function cellclick(e){
     var current = e.target.style.backgroundPosition;
     if(
@@ -68,6 +69,7 @@ function cellclick(e){
         !selected
     ){
         e.target.style.border = "solid 1px red";
+        e.target.style.filter = "invert()";
         selected = e.target;
     }else{
         e.target.style.backgroundPosition = selected.style.backgroundPosition;
@@ -75,7 +77,8 @@ function cellclick(e){
         //e.target.style.border = '';
         selected.style.border = '';
         //console.log(selected.dataset.pos);
-	sortColor(selected, e.target);
+    	sortColor(selected);
+    	sortColor(e.target);
         selected = '';
     }
     if(checkWin()){
@@ -85,26 +88,23 @@ function cellclick(e){
       sleep(100).then(() => {
 	//// code
 	alert("HURRAY!!!");
-	init();
+	//init();
       });
     }
 
 }
 
-function sortColor(selected, target){
-    if(selected.dataset.pos == selected.style.backgroundPosition){
-    	selected.style.border = 'solid 1px white';
-    }
-    else{
-    	selected.style.border = '';
-    }
+function sortColor(target){
     if(target.dataset.pos == target.style.backgroundPosition){
     	target.style.border = 'solid 1px white';
+        target.style.filter = "none";
     }
     else{
      	target.style.border = '';
+        target.style.filter = "";
     }
 }
+
 function randomCell(root){
     var all = root.children;
     //console.log(all.length);
@@ -132,10 +132,12 @@ function randomCell(root){
             .backgroundPosition
         = temp;
         //console.log(index,temp,(all_vars.length-1), all_vars);
-	sortColor(
-            all[all_vars[index]], 
-            all[all_vars[(all_vars.length-1)]]
-	);
+        sortColor(
+                all[all_vars[index]] 
+        );
+        sortColor(
+                all[all_vars[(all_vars.length-1)]]
+        );
         all_vars.splice(index,1);
         all_vars.splice((all_vars.length-1),1);
         //console.log(JSON.stringify(all_vars));
