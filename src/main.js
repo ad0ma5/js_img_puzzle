@@ -6,7 +6,7 @@ var gcoll = 6, grow = 5, ref_img_id='ref_img';
 var gwidth, gheight,
     swidth, sheight,
     ref_img, bgImgArr,
-    selected, moves, time, timeInterval;
+    selected, moves, time, timeInterval, paused;
 var all_vars = [];
 
 function startTime(){
@@ -22,9 +22,33 @@ function updateTime(){
     time++;
     setHTML('time',time);
 }
+function pauseTime(){
+    if(paused){
+      paused = false;
+      setHTML('pause','pause');
+      startTime();
+      showBoard();
+    }else{
+      paused = true;
+      setHTML('pause','play');
+      stopTime();
+      hideBoard();
+    }
+
+}
+function showBoard(){
+    root = document.getElementById("js_img_puzzle");
+    root.style.display = '';
+}
+function hideBoard(){
+    root = document.getElementById("js_img_puzzle");
+    root.style.display = 'none';
+}
 function init(){
     moves = 0;
     time = 0;
+    paused = false;
+    document.getElementById('pause').style.display='';
     setHTML("moves", moves);
     setHTML('time',time);
     root = document.getElementById("js_img_puzzle");
@@ -163,6 +187,7 @@ function ifWin(){
       }
       sleep(100).then(() => {
 	//// code
+    document.getElementById("pause").style.display='none';
     stopTime();
 	alert("HURRAY!!!");
 	//init();
@@ -202,6 +227,7 @@ function initSelectxy(){
     var selectx = document.getElementById("selectx");
     var selecty = document.getElementById("selecty");
     var go = document.getElementById("go");
+    var pause = document.getElementById("pause");
     for(var x = 0;x < 15; x++){
         var opt = document.createElement('option');
         opt.innerHTML = x;
@@ -215,6 +241,7 @@ function initSelectxy(){
         selecty.appendChild(opt);
     }
     go.addEventListener('click', init);
+    pause.addEventListener('click', pauseTime);
 }
  function setHTML(id, txt){
     var el = document.getElementById(id);
