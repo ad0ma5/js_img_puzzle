@@ -6,9 +6,27 @@ var gcoll = 6, grow = 5, ref_img_id='ref_img';
 var gwidth, gheight,
     swidth, sheight,
     ref_img, bgImgArr,
-    selected;
+    selected, moves, time, timeInterval;
 var all_vars = [];
+
+function startTime(){
+    if(timeInterval)
+      clearTimeout(timeInterval);
+    timeInterval = setInterval(updateTime, 1000);
+}
+function stopTime(){
+    if(timeInterval)
+      clearTimeout(timeInterval);
+}
+function updateTime(){
+    time++;
+    setHTML('time',time);
+}
 function init(){
+    moves = 0;
+    time = 0;
+    setHTML("moves", moves);
+    setHTML('time',time);
     root = document.getElementById("js_img_puzzle");
     ref_img = document.getElementById(ref_img_id);
     bgImgArr = document.querySelectorAll("img");
@@ -58,10 +76,12 @@ function init(){
     console.log('ok '+ gwidth +" "+ gheight );
     //sleep(1000);
     randomCell(root);
+    startTime();
     console.log('done');
 }
 
 function cellclick(e){
+    if(ifWin()) return;
     var current = e.target.style.backgroundPosition;
     if(
         //!e.target.style.border
@@ -80,18 +100,11 @@ function cellclick(e){
     	sortColor(selected);
     	sortColor(e.target);
         selected = '';
-    }
-    if(checkWin()){
-      function sleep(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-      }
-      sleep(100).then(() => {
-	//// code
-	alert("HURRAY!!!");
-	//init();
-      });
+        moves++;
+        setHTML("moves", moves);
     }
 
+    if(ifWin()) return;
 }
 
 function sortColor(target){
@@ -143,13 +156,31 @@ function randomCell(root){
         //console.log(JSON.stringify(all_vars));
     }
 }
-
+function ifWin(){
+    if(checkWin()){
+      function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+      }
+      sleep(100).then(() => {
+	//// code
+    stopTime();
+	alert("HURRAY!!!");
+	//init();
+      });
+      return true;
+    }
+  return false;
+}
 function checkWin(){
     var all = root.children;
     for(var i=0;i < all.length;i++){
       var selected = all[i];
-      if(selected.dataset.pos !== selected.style.backgroundPosition){
-	return false;
+      if(
+          selected.dataset.pos 
+          !== 
+          selected.style.backgroundPosition
+      ){
+	    return false;
       }
     }
     return true;
@@ -185,3 +216,8 @@ function initSelectxy(){
     }
     go.addEventListener('click', init);
 }
+ function setHTML(id, txt){
+    var el = document.getElementById(id);
+    el.innerHTML=txt;
+
+ }
