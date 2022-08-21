@@ -228,6 +228,7 @@ function initSelectxy(){
     var selecty = document.getElementById("selecty");
     var go = document.getElementById("go");
     var pause = document.getElementById("pause");
+    var load = document.getElementById("load");
     for(var x = 0;x < 15; x++){
         var opt = document.createElement('option');
         opt.innerHTML = x;
@@ -242,9 +243,30 @@ function initSelectxy(){
     }
     go.addEventListener('click', init);
     pause.addEventListener('click', pauseTime);
+    load.addEventListener('change', loadImg);
+}
+function loadImg(e){
+    console.log(e.target);
+    var load = document.getElementById("load");
+    //alert(load.value);
+    const previewPhoto = () => {
+        const file = load.files;
+    console.log([load]);
+        if (file) {
+            const fileReader = new FileReader();
+            const preview = document.getElementById('ref_img3');
+    fileReader.onload = function (event) {
+                preview.setAttribute('src', event.target.result);
+            }
+            fileReader.readAsDataURL(file[0]);
+        }
+    }
+    previewPhoto();
+   // load.addEventListener("change", previewPhoto);
 }
  function setHTML(id, txt){
     var el = document.getElementById(id);
     el.innerHTML=txt;
 
  }
+
